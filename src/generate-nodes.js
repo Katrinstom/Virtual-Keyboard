@@ -13,9 +13,9 @@ const keyboard = document.createElement('div');
 keyboard.classList.add('keyboard');
 body.appendChild(keyboard);
 
-const keyboard__container = document.createElement('div');
-keyboard__container.classList.add('keyboard__container');
-keyboard.appendChild(keyboard__container);
+const keyboardContainer = document.createElement('div');
+keyboardContainer.classList.add('keyboard__container');
+keyboard.appendChild(keyboardContainer);
 
 const description1 = document.createElement('p');
 description1.classList.add('description');
@@ -24,7 +24,7 @@ body.appendChild(description1);
 
 const description2 = document.createElement('p');
 description2.classList.add('description');
-description2.innerText = 'To switch language En/Ru press Ctrl+Space';
+description2.innerText = 'To switch language En/Ru press ShiftLeft + OptL (AltLeft)';
 body.appendChild(description2);
 
 const arr = [
@@ -92,8 +92,8 @@ const arr = [
     { code: 'ArrowRight', lang: { en: '►', ru: '►' } },
     { code: 'AltRight', lang: { en: 'opt', ru: 'opt' } },
 ];
-let lang = 'rus';
-let capslock = false;
+let lang = 'eng';
+let capslock;
 
 const KeyboardKeys = (arr) => {
         const createKeyName = (keyName) => {
@@ -124,9 +124,6 @@ const KeyboardKeys = (arr) => {
                         buttonKey.classList.add('keyboard__button-wide', 'keyboard__button-caps');
                         buttonKey.setAttribute('id', el.code);
                         buttonKey.innerHTML = createKeyName('caps');
-                        // buttonKey.addEventListener("keydown", () => {
-                        //     buttonKey.classList.toggle('keyboard__button-caps-active');
-                        // });
                         break;
                     case 'enter':
                         buttonKey.classList.add('keyboard__button-wide');
@@ -150,37 +147,70 @@ const KeyboardKeys = (arr) => {
                         break;
                 }
             }
-            keyboard__container.appendChild(buttonKey);
+            keyboardContainer.appendChild(buttonKey);
         });
 };
 KeyboardKeys(arr);
 
-
 const arrFromButtons = Array.from(document.querySelectorAll('button'));
 const textarea = document.querySelector('textarea').focus();
-console.log(arrFromButtons);
+const keys = Array.from(document.querySelectorAll('.keyboard__key'));
+let flag = false;
+
+function changeLanguage() {
+    if (lang == 'eng') { 
+        for (let i = 0; i < keys.length; i++) {
+            keys[i].textContent = arr[i].lang.ru;
+        }
+        lang = 'ru';
+        } 
+    else if (lang == 'ru') {
+        for (let i = 0; i < keys.length; i++) {
+            keys[i].textContent = arr[i].lang.en;
+        }
+         lang = 'eng';
+        }
+    };
+
+    function toUpperLower() {
+            for (let el of keys) {
+                if (el.textContent.length == 1)
+                el.textContent = el.textContent.toUpperCase();
+            }
+            capslock = true;
+        };
+      
+    function toLowerCase() {
+        for (let el of keys) {
+            if (el.textContent.length == 1)
+            el.textContent = el.textContent.toLowerCase();
+        }
+        capslock = false;
+    };
 
 document.addEventListener('keydown', (e) => { 
-    for(let elem of arrFromButtons) {
-        if(elem.id == e.code)  elem.classList.add('active');
-        if(arrFromButtons[27].id == e.code) arrFromButtons[27].classList.add('keyboard__button-caps-active');
-    }
-});
+    for (let elem of arrFromButtons) {
+        if (elem.id == e.code)  elem.classList.add('active');
+        if ('CapsLock' == e.code) { 
+          arrFromButtons[27].classList.add('keyboard__button-caps-active');
+          toUpperLower(keys);
+        };
+        if (e.code == 'ShiftLeft') flag = true; { 
+            if (e.code == 'AltLeft' && flag) {flag = false; changeLanguage(); }
+        }
+        
+    }}
+);
+
 document.addEventListener('keyup', (e) => { 
-    for(let elem of arrFromButtons) {
-        if(elem.id == e.code)  elem.classList.remove('active');
-        if(arrFromButtons[27].id == e.code) arrFromButtons[27].classList.remove('keyboard__button-caps-active');
+    for (let elem of arrFromButtons) {
+        if (elem.id == e.code)  elem.classList.remove('active');
+        if ('CapsLock' == e.code) {
+            arrFromButtons[27].classList.remove('keyboard__button-caps-active');
+            toLowerCase(keys);
+        }
     }
 });
 
 
 
-
-
-// function addActive(elem) {
-//     elem.classList.add('active');
-// }
-
-// function removeActive(elem) {
-//     elem.classList.remove('active');
-// }
