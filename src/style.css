@@ -91,6 +91,7 @@ body {
     background: rgb(127, 199, 255);
 
 }
+
 .keyboard__button-caps::after {
     content: '';
     top: 10px;
@@ -100,7 +101,8 @@ body {
     height: 6px;
     background: whitesmoke;
     border-radius: 50%;
-}    
+}
+
 .keyboard__button-caps-active::after {
     background: greenyellow;
 }
